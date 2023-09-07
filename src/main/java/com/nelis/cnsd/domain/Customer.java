@@ -1,6 +1,6 @@
 package com.nelis.cnsd.domain;
 
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -13,10 +13,15 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private Long id;
     private String BSN;
     private String name;
     @Builder.Default
+    @ManyToMany
     private List<BankAccount> accounts = new ArrayList<>();
 
     public Customer addAccount(BankAccount bankAccount) {

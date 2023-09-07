@@ -1,6 +1,7 @@
 package com.nelis.cnsd.domain;
 
 import com.nelis.cnsd.domain.exceptions.LastOwnerException;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -14,12 +15,17 @@ import static com.nelis.cnsd.domain.AccountStatus.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class BankAccount {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private Long id;
     private String IBAN;
     private double saldo;
     @Builder.Default
     private AccountStatus status = ACTIVE;
     @Builder.Default
+    @ManyToMany
     private List<Customer> owners = new ArrayList<>();
 
     public BankAccount addOwner(Customer customer) {

@@ -1,6 +1,5 @@
 package com.nelis.cnsd.presentation;
 
-import com.nelis.cnsd.presentation.dto.request.BlockBankAccountDTO;
 import com.nelis.cnsd.presentation.dto.request.UpdateBankAccountDTO;
 import com.nelis.cnsd.presentation.dto.response.BlockBankAccountResponse;
 import com.nelis.cnsd.presentation.dto.response.GetBankAccountResponse;
@@ -20,14 +19,14 @@ import java.util.stream.Collectors;
 public class BankAccountController {
     private final BankAccountService bankAccountService;
 
-    @GetMapping("/{IBAN}")
-    public ResponseEntity<GetBankAccountResponse> get(@PathVariable String IBAN) {
-        return ResponseEntity.ok(GetBankAccountResponse.from(bankAccountService.get(IBAN)));
+    @GetMapping("/{id}")
+    public ResponseEntity<GetBankAccountResponse> get(@PathVariable Long id) {
+        return ResponseEntity.ok(GetBankAccountResponse.from(bankAccountService.get(id)));
     }
 
-    @GetMapping("/{IBAN}/owners")
-    public ResponseEntity<GetBankAccountResponse> getAccountsFromOwners(@PathVariable String IBAN) {
-        return ResponseEntity.ok(GetBankAccountResponse.from(bankAccountService.get(IBAN)));
+    @GetMapping("/{id}/owners")
+    public ResponseEntity<GetBankAccountResponse> getAccountsFromOwners(@PathVariable Long id) {
+        return ResponseEntity.ok(GetBankAccountResponse.from(bankAccountService.get(id)));
     }
 
     @GetMapping
@@ -35,32 +34,28 @@ public class BankAccountController {
         return ResponseEntity.ok((bankAccountService.getAll()).stream().map(GetBankAccountResponse::from).collect(Collectors.toList()));
     }
 
-//    ("/block") NIET DOEN! URL mag geen werkwoorden bevatten.
-    @PatchMapping("/{IBAN}")
-    public ResponseEntity<BlockBankAccountResponse> block(@PathVariable String IBAN, @RequestBody BlockBankAccountDTO dto) {
-        return ResponseEntity.ok(BlockBankAccountResponse.from(bankAccountService.block(IBAN, dto)));
+    @PatchMapping("/{id}")
+    public ResponseEntity<BlockBankAccountResponse> block(@PathVariable Long id) {
+        return ResponseEntity.ok(BlockBankAccountResponse.from(bankAccountService.block(id)));
     }
 
-//    Overwegen om dit als PUT te implementeren. Zorgt voor minder logica om objecten te updaten
-    @PutMapping("/{IBAN}")
-    public ResponseEntity<UpdateBankAccountResponse> update(@RequestBody UpdateBankAccountDTO dto) {
-        return ResponseEntity.ok(UpdateBankAccountResponse.from(bankAccountService.update(dto)));
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdateBankAccountResponse> update(@PathVariable Long id, @RequestBody UpdateBankAccountDTO dto) {
+        return ResponseEntity.ok(UpdateBankAccountResponse.from(bankAccountService.update(id, dto)));
     }
 
-//    POST word ook gebruikt om een nieuwe koppeling aan te maken.
-//    PUT kun je gebruiken als je het id van het toe te voegen object al hebt. Voordeel is dat PUT idempotent is.
-    @PutMapping("/{IBAN}/owners/{BSN}")
-    public ResponseEntity<UpdateBankAccountResponse> addBankAccount(@PathVariable String IBAN, @PathVariable String BSN) {
-        return ResponseEntity.ok(UpdateBankAccountResponse.from(bankAccountService.addBankAccount(IBAN, BSN)));
+    @PutMapping("/{bankId}/owners/{customerId}")
+    public ResponseEntity<UpdateBankAccountResponse> addOwner(@PathVariable Long bankId, @PathVariable Long customerId) {
+        return ResponseEntity.ok(UpdateBankAccountResponse.from(bankAccountService.addOwner(bankId, customerId)));
     }
 
-    @DeleteMapping("/{IBAN}/owners/{BSN}")
-    public ResponseEntity<UpdateBankAccountResponse> removeBankAccount(@PathVariable String IBAN, @PathVariable String BSN) {
-        return ResponseEntity.ok(UpdateBankAccountResponse.from(bankAccountService.removeBankAccount(IBAN, BSN)));
+    @DeleteMapping("/{bankId}/owners/{customerId}")
+    public ResponseEntity<UpdateBankAccountResponse> removeOwner(@PathVariable Long bankId, @PathVariable Long customerId) {
+        return ResponseEntity.ok(UpdateBankAccountResponse.from(bankAccountService.removeOwner(bankId, customerId)));
     }
 
-    @DeleteMapping("/{BSN}")
-    public ResponseEntity<RemoveBankAccountResponse> remove(@PathVariable String BSN) {
-        return ResponseEntity.ok(RemoveBankAccountResponse.from(bankAccountService.remove(BSN)));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<RemoveBankAccountResponse> remove(@PathVariable Long id) {
+        return ResponseEntity.ok(RemoveBankAccountResponse.from(bankAccountService.remove(id)));
     }
 }

@@ -1,4 +1,4 @@
 package com.nelis.cnsd.presentation.dto.request;
 
-public record UpdateBankAccountDTO(String IBAN, double saldo) {
+public record UpdateBankAccountDTO(double saldo) {
 }

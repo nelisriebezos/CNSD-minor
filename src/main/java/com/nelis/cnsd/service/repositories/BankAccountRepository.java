@@ -4,33 +4,14 @@ import com.nelis.cnsd.domain.BankAccount;
 import com.nelis.cnsd.service.exceptions.BankAccountNotFound;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-@AllArgsConstructor
-public class BankAccountRepository {
-    @Builder.Default
-    private List<BankAccount> accounts = new ArrayList<>();
-
-    public BankAccount save(BankAccount account) {
-        accounts.add(account);
-        return account;
-    }
-
-    public List<BankAccount> getAll() {
-        return accounts;
-    }
-
-    public boolean remove(BankAccount account) {
-     accounts.remove(account);
-     return true;
-    }
-
-    public BankAccount getAccountByIBAN(String IBAN) {
-        return accounts.stream().filter(account -> account.getIBAN().equals(IBAN)).findFirst().orElseThrow(BankAccountNotFound::new);
-    }
-
+public interface BankAccountRepository extends JpaRepository<BankAccount, Long> {
+    public Optional<BankAccount> getBankAccountByIBAN(String IBAN);
 }

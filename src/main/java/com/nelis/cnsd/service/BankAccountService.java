@@ -4,6 +4,8 @@ import com.nelis.cnsd.domain.BankAccount;
 import com.nelis.cnsd.domain.Customer;
 import com.nelis.cnsd.presentation.dto.request.*;
 import com.nelis.cnsd.service.exceptions.AccountIsBlocked;
+import com.nelis.cnsd.service.exceptions.BankAccountNotFound;
+import com.nelis.cnsd.service.exceptions.CustomerNotFound;
 import com.nelis.cnsd.service.repositories.BankAccountRepository;
 import com.nelis.cnsd.service.repositories.CustomerRepository;
 import lombok.AllArgsConstructor;
@@ -18,64 +20,56 @@ public class BankAccountService {
     private final BankAccountRepository bankAccountRepository;
     private final CustomerRepository customerRepository;
 
-    public BankAccount get(String IBAN) {
-        return bankAccountRepository.getAccountByIBAN(IBAN);
+    public BankAccount get(Long id) {
+        return bankAccountRepository.findById(id).orElseThrow(BankAccountNotFound::new);
     }
 
     public List<BankAccount> getAll() {
-        return bankAccountRepository.getAll();
+        return bankAccountRepository.findAll();
     }
 
-    public BankAccount create(String BSN, NewBankAccountDTO dto) {
-        Customer customer = customerRepository.getCustomerByBSN(BSN);
+    public BankAccount create(Long id, NewBankAccountDTO dto) {
+        Customer customer = customerRepository.findById(id).orElseThrow(BankAccountNotFound::new);
         BankAccount newAccount = BankAccount.builder()
                 .IBAN(dto.IBAN())
                 .saldo(dto.saldo())
                 .owners(Arrays.asList(customer))
                 .build();
-        customer.addAccount(newAccount);
         return bankAccountRepository.save(newAccount);
     }
 
-    public BankAccount update(UpdateBankAccountDTO dto) {
-        BankAccount account = bankAccountRepository.getAccountByIBAN(dto.IBAN());
+    public BankAccount update(Long id, UpdateBankAccountDTO dto) {
+        BankAccount account = bankAccountRepository.findById(id).orElseThrow(BankAccountNotFound::new);
         if (account.isActive()) {
             account.setSaldo(dto.saldo());
             return account;
         } else throw new AccountIsBlocked();
     }
 
-    public boolean block(BlockBankAccountDTO dto) {
-        BankAccount account = bankAccountRepository.getAccountByIBAN(dto.IBAN());
+    public boolean block(Long id) {
+        BankAccount account = bankAccountRepository.findById(id).orElseThrow(BankAccountNotFound::new);
         account.block();
         return true;
     }
 
-    public boolean remove(String IBAN) {
-        BankAccount account = bankAccountRepository.getAccountByIBAN(IBAN);
-        List<Customer> owners = account.getOwners();
-        owners.forEach(owner -> owner.removeAccount(account));
-        bankAccountRepository.remove(account);
+    public boolean remove(Long id) {
+        bankAccountRepository.deleteById(id);
         return true;
     }
 
-    public BankAccount addBankAccount(AddAccountOwnershipDTO dto) {
-        Customer customer = customerRepository.getCustomerByBSN(dto.BSN());
-        BankAccount account = bankAccountRepository.getAccountByIBAN(dto.IBAN());
+    public BankAccount addOwner(Long bankId, Long customerId) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(CustomerNotFound::new);
+        BankAccount account = bankAccountRepository.findById(bankId).orElseThrow(BankAccountNotFound::new);
         if (account.isActive()) {
-            account.addOwner(customer);
-            customer.addAccount(account);
-            return account;
+            return bankAccountRepository.save(account.addOwner(customer));
         } else throw new AccountIsBlocked();
     }
 
-    public BankAccount removeBankAccount(RemoveAccountOwnershipDTO dto) {
-        Customer customer = customerRepository.getCustomerByBSN(dto.BSN());
-        BankAccount account = bankAccountRepository.getAccountByIBAN(dto.IBAN());
+    public BankAccount removeOwner(Long bankId, Long customerId) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(CustomerNotFound::new);
+        BankAccount account = bankAccountRepository.findById(bankId).orElseThrow(BankAccountNotFound::new);
         if (account.isActive()) {
-            account.removeOwner(customer);
-            customer.removeAccount(account);
-            return account;
+            return bankAccountRepository.save(account.removeOwner(customer));
         } else throw new AccountIsBlocked();
     }
 }

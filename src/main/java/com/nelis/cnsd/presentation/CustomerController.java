@@ -17,19 +17,19 @@ public class CustomerController {
     private final CustomerService customerService;
     private final BankAccountService bankAccountService;
 
-    @GetMapping("/{BSN}")
-    public ResponseEntity<GetCustomerResponse> get(@PathVariable String BSN) {
-        return ResponseEntity.ok(GetCustomerResponse.from(customerService.get(BSN)));
+    @GetMapping("/{id}")
+    public ResponseEntity<GetCustomerResponse> get(@PathVariable Long id) {
+        return ResponseEntity.ok(GetCustomerResponse.from(customerService.get(id)));
     }
 
-    @GetMapping("/{BSN}/accounts")
-    public ResponseEntity<GetCustomerAccountsResponse> getBankAccountsOfCustomer(@PathVariable String BSN) {
-        return ResponseEntity.ok(GetCustomerAccountsResponse.from(customerService.getBankAccountsOfCustomer(BSN)));
+    @GetMapping("/{id}/accounts")
+    public ResponseEntity<GetCustomerAccountsResponse> getBankAccountsOfCustomer(@PathVariable Long id) {
+        return ResponseEntity.ok(GetCustomerAccountsResponse.from(customerService.getBankAccountsOfCustomer(id)));
     }
 
-    @PostMapping("/{BSN}/accounts")
-    public ResponseEntity<NewBankAccountResponse> create(@PathVariable String BSN, @RequestBody NewBankAccountDTO dto) {
-        return ResponseEntity.ok(NewBankAccountResponse.from(bankAccountService.create(BSN, dto)));
+    @PostMapping("/{id}/accounts")
+    public ResponseEntity<NewBankAccountResponse> create(@PathVariable Long id, @RequestBody NewBankAccountDTO dto) {
+        return ResponseEntity.ok(NewBankAccountResponse.from(bankAccountService.create(id, dto)));
     }
 
     @PostMapping
@@ -37,14 +37,13 @@ public class CustomerController {
         return ResponseEntity.ok(NewCustomerResponse.from(customerService.create(dto)));
     }
 
-//    BSN meegeven in @Pathvariable in plaats van de DTO.
-    @PatchMapping("/{BSN}")
-    public ResponseEntity<UpdateCustomerResponse> update(@PathVariable String BSN, @RequestBody UpdateCustomerDTO dto) {
-        return ResponseEntity.ok(UpdateCustomerResponse.from(customerService.update(BSN, dto)));
+    @PatchMapping("/{id}")
+    public ResponseEntity<UpdateCustomerResponse> update(@PathVariable Long id, @RequestBody UpdateCustomerDTO dto) {
+        return ResponseEntity.ok(UpdateCustomerResponse.from(customerService.update(id, dto)));
     }
 
-    @DeleteMapping("/{BSN}")
-    public ResponseEntity<RemoveCustomerResponse> remove(@PathVariable String BSN) {
-        return ResponseEntity.ok(RemoveCustomerResponse.from(customerService.remove(BSN)));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<RemoveCustomerResponse> remove(@PathVariable Long id) {
+        return ResponseEntity.ok(RemoveCustomerResponse.from(customerService.remove(id)));
     }
 }

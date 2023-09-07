@@ -4,6 +4,7 @@ import com.nelis.cnsd.domain.BankAccount;
 import com.nelis.cnsd.domain.Customer;
 import com.nelis.cnsd.presentation.dto.request.NewCustomerDTO;
 import com.nelis.cnsd.presentation.dto.request.UpdateCustomerDTO;
+import com.nelis.cnsd.service.exceptions.CustomerNotFound;
 import com.nelis.cnsd.service.repositories.BankAccountRepository;
 import com.nelis.cnsd.service.repositories.CustomerRepository;
 import lombok.AllArgsConstructor;
@@ -15,14 +16,13 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomerService {
     private final CustomerRepository customerRepository;
-    private final BankAccountRepository bankAccountRepository;
 
-    public Customer get(String BSN) {
-        return customerRepository.getCustomerByBSN(BSN);
+    public Customer get(Long id) {
+        return customerRepository.findById(id).orElseThrow(CustomerNotFound::new);
     }
 
-    public List<BankAccount> getBankAccountsOfCustomer(String BSN) {
-        return customerRepository.getCustomerByBSN(BSN).getAccounts();
+    public List<BankAccount> getBankAccountsOfCustomer(Long id) {
+        return customerRepository.findById(id).orElseThrow(CustomerNotFound::new).getAccounts();
     }
 
     public Customer create(NewCustomerDTO dto) {
@@ -34,14 +34,14 @@ public class CustomerService {
         return newCustomer;
     }
 
-    public Customer update(String BSN, UpdateCustomerDTO dto) {
-        Customer customer = customerRepository.getCustomerByBSN(BSN);
+    public Customer update(Long id, UpdateCustomerDTO dto) {
+        Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFound::new);
         customer.setName(dto.name());
-        return customer;
+        return customerRepository.save(customer);
     }
 
-    public boolean remove(String BSN) {
-        Customer customer = customerRepository.getCustomerByBSN(BSN);
-        return customerRepository.remove(customer);
+    public boolean remove(Long id) {
+        customerRepository.deleteById(id);
+        return true;
     }
 }
