@@ -1,4 +1,4 @@
-package com.nelis.cnsd.service.dto.response;
+package com.nelis.cnsd.presentation.dto.response;
 
 public record RemoveCustomerResponse(boolean deleted) {
     public static RemoveCustomerResponse from(boolean deleted) {

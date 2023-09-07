@@ -1,4 +1,4 @@
-package com.nelis.cnsd.service.dto.request;
+package com.nelis.cnsd.presentation.dto.request;
 
 import java.util.List;
 

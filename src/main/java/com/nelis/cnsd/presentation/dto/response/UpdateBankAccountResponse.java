@@ -1,4 +1,4 @@
-package com.nelis.cnsd.service.dto.response;
+package com.nelis.cnsd.presentation.dto.response;
 
 import com.nelis.cnsd.domain.AccountStatus;
 import com.nelis.cnsd.domain.BankAccount;

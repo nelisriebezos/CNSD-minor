@@ -1,8 +1,12 @@
 package com.nelis.cnsd.presentation;
 
+import com.nelis.cnsd.presentation.dto.request.BlockBankAccountDTO;
+import com.nelis.cnsd.presentation.dto.request.UpdateBankAccountDTO;
+import com.nelis.cnsd.presentation.dto.response.BlockBankAccountResponse;
+import com.nelis.cnsd.presentation.dto.response.GetBankAccountResponse;
+import com.nelis.cnsd.presentation.dto.response.RemoveBankAccountResponse;
+import com.nelis.cnsd.presentation.dto.response.UpdateBankAccountResponse;
 import com.nelis.cnsd.service.BankAccountService;
-import com.nelis.cnsd.service.dto.request.*;
-import com.nelis.cnsd.service.dto.response.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/accounts")
 @AllArgsConstructor
 public class BankAccountController {
     private final BankAccountService bankAccountService;
@@ -21,34 +25,38 @@ public class BankAccountController {
         return ResponseEntity.ok(GetBankAccountResponse.from(bankAccountService.get(IBAN)));
     }
 
+    @GetMapping("/{IBAN}/owners")
+    public ResponseEntity<GetBankAccountResponse> getAccountsFromOwners(@PathVariable String IBAN) {
+        return ResponseEntity.ok(GetBankAccountResponse.from(bankAccountService.get(IBAN)));
+    }
+
     @GetMapping
     public ResponseEntity<List<GetBankAccountResponse>> getAllAccounts() {
         return ResponseEntity.ok((bankAccountService.getAll()).stream().map(GetBankAccountResponse::from).collect(Collectors.toList()));
     }
 
-    @PostMapping
-    public ResponseEntity<NewBankAccountResponse> create(@RequestBody NewBankAccountDTO dto) {
-        return ResponseEntity.ok(NewBankAccountResponse.from(bankAccountService.create(dto)));
+//    ("/block") NIET DOEN! URL mag geen werkwoorden bevatten.
+    @PatchMapping("/{IBAN}")
+    public ResponseEntity<BlockBankAccountResponse> block(@PathVariable String IBAN, @RequestBody BlockBankAccountDTO dto) {
+        return ResponseEntity.ok(BlockBankAccountResponse.from(bankAccountService.block(IBAN, dto)));
     }
 
-    @PostMapping("/block")
-    public ResponseEntity<BlockBankAccountResponse> create(@RequestBody BlockBankAccountDTO dto) {
-        return ResponseEntity.ok(BlockBankAccountResponse.from(bankAccountService.block(dto)));
-    }
-
-    @PatchMapping
+//    Overwegen om dit als PUT te implementeren. Zorgt voor minder logica om objecten te updaten
+    @PutMapping("/{IBAN}")
     public ResponseEntity<UpdateBankAccountResponse> update(@RequestBody UpdateBankAccountDTO dto) {
         return ResponseEntity.ok(UpdateBankAccountResponse.from(bankAccountService.update(dto)));
     }
 
-    @PatchMapping("/add")
-    public ResponseEntity<UpdateBankAccountResponse> addBankAccount(@RequestBody AddAccountOwnershipDTO dto) {
-        return ResponseEntity.ok(UpdateBankAccountResponse.from(bankAccountService.addBankAccount(dto)));
+//    POST word ook gebruikt om een nieuwe koppeling aan te maken.
+//    PUT kun je gebruiken als je het id van het toe te voegen object al hebt. Voordeel is dat PUT idempotent is.
+    @PutMapping("/{IBAN}/owners/{BSN}")
+    public ResponseEntity<UpdateBankAccountResponse> addBankAccount(@PathVariable String IBAN, @PathVariable String BSN) {
+        return ResponseEntity.ok(UpdateBankAccountResponse.from(bankAccountService.addBankAccount(IBAN, BSN)));
     }
 
-    @PatchMapping("/remove")
-    public ResponseEntity<UpdateBankAccountResponse> removeBankAccount(@RequestBody RemoveAccountOwnershipDTO dto) {
-        return ResponseEntity.ok(UpdateBankAccountResponse.from(bankAccountService.removeBankAccount(dto)));
+    @DeleteMapping("/{IBAN}/owners/{BSN}")
+    public ResponseEntity<UpdateBankAccountResponse> removeBankAccount(@PathVariable String IBAN, @PathVariable String BSN) {
+        return ResponseEntity.ok(UpdateBankAccountResponse.from(bankAccountService.removeBankAccount(IBAN, BSN)));
     }
 
     @DeleteMapping("/{BSN}")

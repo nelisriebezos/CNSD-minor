@@ -1,4 +1,4 @@
-package com.nelis.cnsd.service.dto.response;
+package com.nelis.cnsd.presentation.dto.response;
 
 public record BlockBankAccountResponse(boolean blocked) {
     public static BlockBankAccountResponse from(boolean blocked) {

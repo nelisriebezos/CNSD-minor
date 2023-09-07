@@ -2,7 +2,8 @@ package com.nelis.cnsd.service;
 
 import com.nelis.cnsd.domain.BankAccount;
 import com.nelis.cnsd.domain.Customer;
-import com.nelis.cnsd.service.dto.request.*;
+import com.nelis.cnsd.presentation.dto.request.NewCustomerDTO;
+import com.nelis.cnsd.presentation.dto.request.UpdateCustomerDTO;
 import com.nelis.cnsd.service.repositories.BankAccountRepository;
 import com.nelis.cnsd.service.repositories.CustomerRepository;
 import lombok.AllArgsConstructor;
@@ -33,8 +34,8 @@ public class CustomerService {
         return newCustomer;
     }
 
-    public Customer update(UpdateCustomerDTO dto) {
-        Customer customer = customerRepository.getCustomerByBSN(dto.BSN());
+    public Customer update(String BSN, UpdateCustomerDTO dto) {
+        Customer customer = customerRepository.getCustomerByBSN(BSN);
         customer.setName(dto.name());
         return customer;
     }

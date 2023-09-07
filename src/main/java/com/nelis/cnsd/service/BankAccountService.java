@@ -2,7 +2,7 @@ package com.nelis.cnsd.service;
 
 import com.nelis.cnsd.domain.BankAccount;
 import com.nelis.cnsd.domain.Customer;
-import com.nelis.cnsd.service.dto.request.*;
+import com.nelis.cnsd.presentation.dto.request.*;
 import com.nelis.cnsd.service.exceptions.AccountIsBlocked;
 import com.nelis.cnsd.service.repositories.BankAccountRepository;
 import com.nelis.cnsd.service.repositories.CustomerRepository;
@@ -26,8 +26,8 @@ public class BankAccountService {
         return bankAccountRepository.getAll();
     }
 
-    public BankAccount create(NewBankAccountDTO dto) {
-        Customer customer = customerRepository.getCustomerByBSN(dto.ownerBSN());
+    public BankAccount create(String BSN, NewBankAccountDTO dto) {
+        Customer customer = customerRepository.getCustomerByBSN(BSN);
         BankAccount newAccount = BankAccount.builder()
                 .IBAN(dto.IBAN())
                 .saldo(dto.saldo())

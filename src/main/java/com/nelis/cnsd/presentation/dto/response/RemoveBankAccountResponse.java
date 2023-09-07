@@ -1,9 +1,4 @@
-package com.nelis.cnsd.service.dto.response;
-
-import com.nelis.cnsd.domain.AccountStatus;
-import com.nelis.cnsd.domain.BankAccount;
-
-import java.util.List;
+package com.nelis.cnsd.presentation.dto.response;
 
 public record RemoveBankAccountResponse(boolean removed) {
     public static RemoveBankAccountResponse from(boolean removed) {
