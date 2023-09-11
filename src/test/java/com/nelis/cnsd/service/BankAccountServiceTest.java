@@ -6,4 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BankAccountServiceTest {
 
+    @Test
+    void quickOne() {
+        assertEquals(1, 1);
+    }
 }
