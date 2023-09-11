@@ -47,4 +47,4 @@ target/
 ### VS Code ###
 .vscode/
 
-src/main/resources/application.properties
+*.properties
