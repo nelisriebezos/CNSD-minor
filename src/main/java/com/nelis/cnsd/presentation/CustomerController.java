@@ -28,12 +28,12 @@ public class CustomerController {
     }
 
     @PostMapping("/{id}/accounts")
-    public ResponseEntity<NewBankAccountResponse> create(@PathVariable Long id, @RequestBody NewBankAccountDTO dto) {
+    public ResponseEntity<NewBankAccountResponse> createAccount(@PathVariable Long id, @RequestBody NewBankAccountDTO dto) {
         return ResponseEntity.ok(NewBankAccountResponse.from(bankAccountService.create(id, dto)));
     }
 
     @PostMapping
-    public ResponseEntity<NewCustomerResponse> create(@RequestBody NewCustomerDTO dto) {
+    public ResponseEntity<NewCustomerResponse> createCustomer(@RequestBody NewCustomerDTO dto) {
         return ResponseEntity.ok(NewCustomerResponse.from(customerService.create(dto)));
     }
 

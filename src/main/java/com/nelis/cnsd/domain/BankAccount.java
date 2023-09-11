@@ -27,6 +27,7 @@ public class BankAccount {
     private String IBAN;
     private double saldo;
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     private AccountStatus status = ACTIVE;
     @Builder.Default
     @ManyToMany(mappedBy = "accounts")
