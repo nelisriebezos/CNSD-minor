@@ -14,6 +14,10 @@
 	<name>cnsd</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
+		<app.profiles>
+			dev,
+			prod
+		</app.profiles>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
