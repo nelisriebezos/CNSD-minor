@@ -3,7 +3,11 @@ package com.nelis.cnsd.domain;
 import com.nelis.cnsd.domain.exceptions.LastOwnerException;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +22,7 @@ import static com.nelis.cnsd.domain.AccountStatus.*;
 @Entity
 public class BankAccount {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String IBAN;
     private double saldo;
@@ -27,6 +31,10 @@ public class BankAccount {
     @Builder.Default
     @ManyToMany
     private List<Customer> owners = new ArrayList<>();
+    @CreatedDate
+    private Timestamp created;
+    @LastModifiedDate
+    private Timestamp lastUpdated;
 
     public BankAccount addOwner(Customer customer) {
         if (!owners.contains(customer)) owners.add(customer);

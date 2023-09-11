@@ -11,6 +11,7 @@ import com.nelis.cnsd.service.repositories.CustomerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class BankAccountService {
         BankAccount account = bankAccountRepository.findById(id).orElseThrow(BankAccountNotFound::new);
         if (account.isActive()) {
             account.setSaldo(dto.saldo());
+            bankAccountRepository.save(account);
             return account;
         } else throw new AccountIsBlocked();
     }
@@ -49,6 +51,7 @@ public class BankAccountService {
     public boolean block(Long id) {
         BankAccount account = bankAccountRepository.findById(id).orElseThrow(BankAccountNotFound::new);
         account.block();
+        bankAccountRepository.save(account);
         return true;
     }
 
@@ -61,7 +64,8 @@ public class BankAccountService {
         Customer customer = customerRepository.findById(customerId).orElseThrow(CustomerNotFound::new);
         BankAccount account = bankAccountRepository.findById(bankId).orElseThrow(BankAccountNotFound::new);
         if (account.isActive()) {
-            return bankAccountRepository.save(account.addOwner(customer));
+            account.addOwner(customer);
+            return bankAccountRepository.save(account);
         } else throw new AccountIsBlocked();
     }
 
@@ -69,7 +73,8 @@ public class BankAccountService {
         Customer customer = customerRepository.findById(customerId).orElseThrow(CustomerNotFound::new);
         BankAccount account = bankAccountRepository.findById(bankId).orElseThrow(BankAccountNotFound::new);
         if (account.isActive()) {
-            return bankAccountRepository.save(account.removeOwner(customer));
+            account.removeOwner(customer);
+            return bankAccountRepository.save(account);
         } else throw new AccountIsBlocked();
     }
 }
