@@ -29,7 +29,7 @@ public class BankAccount {
     @Builder.Default
     private AccountStatus status = ACTIVE;
     @Builder.Default
-    @ManyToMany
+    @ManyToMany(mappedBy = "accounts")
     private List<Customer> owners = new ArrayList<>();
     @CreatedDate
     private Timestamp created;

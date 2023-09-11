@@ -36,6 +36,7 @@ public class BankAccountService {
                 .saldo(dto.saldo())
                 .owners(Arrays.asList(customer))
                 .build();
+        customer.addAccount(newAccount);
         return bankAccountRepository.save(newAccount);
     }
 
@@ -65,6 +66,7 @@ public class BankAccountService {
         BankAccount account = bankAccountRepository.findById(bankId).orElseThrow(BankAccountNotFound::new);
         if (account.isActive()) {
             account.addOwner(customer);
+            customer.addAccount(account);
             return bankAccountRepository.save(account);
         } else throw new AccountIsBlocked();
     }
@@ -74,6 +76,7 @@ public class BankAccountService {
         BankAccount account = bankAccountRepository.findById(bankId).orElseThrow(BankAccountNotFound::new);
         if (account.isActive()) {
             account.removeOwner(customer);
+            customer.removeAccount(account);
             return bankAccountRepository.save(account);
         } else throw new AccountIsBlocked();
     }
