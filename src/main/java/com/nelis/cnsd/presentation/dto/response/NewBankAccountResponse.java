@@ -7,6 +7,7 @@ import java.util.List;
 
 public record NewBankAccountResponse(Long id, String IBAN, double saldo, AccountStatus status, List<String> owners) {
     public static NewBankAccountResponse from(BankAccount account) {
+        System.out.println(account);
         return new NewBankAccountResponse(
                 account.getId(),
                 account.getIBAN(),

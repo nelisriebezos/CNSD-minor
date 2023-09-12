@@ -2,7 +2,8 @@ package com.nelis.cnsd.service;
 
 import com.nelis.cnsd.domain.BankAccount;
 import com.nelis.cnsd.domain.Customer;
-import com.nelis.cnsd.presentation.dto.request.*;
+import com.nelis.cnsd.presentation.dto.request.NewBankAccountDTO;
+import com.nelis.cnsd.presentation.dto.request.UpdateBankAccountDTO;
 import com.nelis.cnsd.service.exceptions.AccountIsBlocked;
 import com.nelis.cnsd.service.exceptions.BankAccountNotFound;
 import com.nelis.cnsd.service.exceptions.CustomerNotFound;
@@ -11,7 +12,6 @@ import com.nelis.cnsd.service.repositories.CustomerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,13 +30,20 @@ public class BankAccountService {
     }
 
     public BankAccount create(Long id, NewBankAccountDTO dto) {
+        System.out.println("im here");
         Customer customer = customerRepository.findById(id).orElseThrow(BankAccountNotFound::new);
+
+        System.out.println(customer);
+        System.out.println("customer");
+
         BankAccount newAccount = BankAccount.builder()
                 .IBAN(dto.IBAN())
                 .saldo(dto.saldo())
                 .owners(Arrays.asList(customer))
                 .build();
         customer.addAccount(newAccount);
+
+        System.out.println(newAccount);
         return bankAccountRepository.save(newAccount);
     }
 

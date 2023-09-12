@@ -3,7 +3,6 @@ package com.nelis.cnsd.domain;
 import com.nelis.cnsd.domain.exceptions.LastOwnerException;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -12,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.nelis.cnsd.domain.AccountStatus.*;
+import static com.nelis.cnsd.domain.AccountStatus.ACTIVE;
+import static com.nelis.cnsd.domain.AccountStatus.BLOCKED;
 
 @Getter
 @Setter
@@ -20,6 +20,7 @@ import static com.nelis.cnsd.domain.AccountStatus.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 public class BankAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,6 +32,7 @@ public class BankAccount {
     private AccountStatus status = ACTIVE;
     @Builder.Default
     @ManyToMany(mappedBy = "accounts")
+    @ToString.Exclude
     private List<Customer> owners = new ArrayList<>();
     @CreatedDate
     private Timestamp created;

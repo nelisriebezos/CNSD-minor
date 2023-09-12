@@ -25,7 +25,11 @@ class CustomerControllerTest {
 
     @Test
     void get() {
-        Customer c = Customer.builder().id(1L).build();
+        Customer c = Customer.builder()
+                .id(1L)
+                .name("Niels")
+                .BSN("BSN")
+                .build();
         Mockito.when(customerService.get(Mockito.anyLong())).thenReturn(c);
         Long responseId = customerController.get(1L).getBody().id();
         Mockito.verify(customerService, Mockito.times(1)).get(1L);

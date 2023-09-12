@@ -1,14 +1,16 @@
 package com.nelis.cnsd.presentation;
 
-import com.nelis.cnsd.presentation.dto.response.*;
-import com.nelis.cnsd.service.BankAccountService;
-import com.nelis.cnsd.service.CustomerService;
 import com.nelis.cnsd.presentation.dto.request.NewBankAccountDTO;
 import com.nelis.cnsd.presentation.dto.request.NewCustomerDTO;
 import com.nelis.cnsd.presentation.dto.request.UpdateCustomerDTO;
+import com.nelis.cnsd.presentation.dto.response.*;
+import com.nelis.cnsd.service.BankAccountService;
+import com.nelis.cnsd.service.CustomerService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/customers")
@@ -23,8 +25,8 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}/accounts")
-    public ResponseEntity<GetCustomerAccountsResponse> getBankAccountsOfCustomer(@PathVariable Long id) {
-        return ResponseEntity.ok(GetCustomerAccountsResponse.from(customerService.getBankAccountsOfCustomer(id)));
+    public ResponseEntity<List<GetBankAccountResponse>> getBankAccountsOfCustomer(@PathVariable Long id) {
+        return ResponseEntity.ok(customerService.getBankAccountsOfCustomer(id).stream().map(GetBankAccountResponse::from).toList());
     }
 
     @PostMapping("/{id}/accounts")

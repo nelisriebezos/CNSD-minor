@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,6 +26,7 @@ public class Customer {
     private String name;
     @Builder.Default
     @ManyToMany
+    @ToString.Exclude
     private List<BankAccount> accounts = new ArrayList<>();
     @CreatedDate
     private Timestamp created;
