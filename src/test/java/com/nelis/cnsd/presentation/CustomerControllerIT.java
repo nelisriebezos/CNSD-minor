@@ -35,7 +35,7 @@ public class CustomerControllerIT {
     private int port;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private TestRestTemplate testRestTemplate;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -65,7 +65,7 @@ public class CustomerControllerIT {
                 .build();
         c = customerRepository.save(c);
 
-        ResponseEntity<GetCustomerResponse> response = restTemplate.getForEntity(
+        ResponseEntity<GetCustomerResponse> response = testRestTemplate.getForEntity(
                 path + c.getId(),
                 GetCustomerResponse.class
         );
@@ -97,7 +97,7 @@ public class CustomerControllerIT {
         c.addAccount(b);
         c = customerRepository.save(c);
 
-        ResponseEntity<List<GetBankAccountResponse>> response = restTemplate.exchange(
+        ResponseEntity<List<GetBankAccountResponse>> response = testRestTemplate.exchange(
                 path + c.getId() + "/accounts",
                 HttpMethod.GET,
                 null,
@@ -122,7 +122,7 @@ public class CustomerControllerIT {
         NewBankAccountDTO dto = new NewBankAccountDTO("iban", 0.0);
         HttpEntity<NewBankAccountDTO> requestEntity = new HttpEntity<>(dto);
 
-        var response = restTemplate.exchange(
+        var response = testRestTemplate.exchange(
                 path + c.getId() + "/accounts",
                 HttpMethod.POST,
                 requestEntity,
