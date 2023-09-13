@@ -17,8 +17,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
@@ -118,25 +120,23 @@ public class CustomerControllerIT {
         c = customerRepository.save(c);
 
         NewBankAccountDTO dto = new NewBankAccountDTO("iban", 0.0);
-        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<NewBankAccountDTO> requestEntity = new HttpEntity<>(dto);
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<NewBankAccountDTO> requestEntity = new HttpEntity<>(dto, headers);
-        restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-
-        ResponseEntity<NewBankAccountResponse> response = restTemplate.exchange(
-                path + "/create",
+        var response = restTemplate.exchange(
+                path + c.getId() + "/accounts",
                 HttpMethod.POST,
                 requestEntity,
                 NewBankAccountResponse.class
         );
+
+        c = customerRepository.findById(c.getId()).get();
 
         NewBankAccountResponse responseBody = response.getBody();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(responseBody.id());
         assertEquals("iban", responseBody.IBAN());
         assertEquals(0.0, responseBody.saldo());
-        assertEquals(1, customerRepository.findById(c.getId()).get().getAccounts().size());
+        assertEquals(1, c.getAccounts().size());
     }
 
 
