@@ -30,12 +30,7 @@ public class BankAccountService {
     }
 
     public BankAccount create(Long id, NewBankAccountDTO dto) {
-        System.out.println("im here");
         Customer customer = customerRepository.findById(id).orElseThrow(BankAccountNotFound::new);
-
-        System.out.println(customer);
-        System.out.println("customer");
-
         BankAccount newAccount = BankAccount.builder()
                 .IBAN(dto.IBAN())
                 .saldo(dto.saldo())
