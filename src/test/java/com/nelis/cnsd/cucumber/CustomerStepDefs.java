@@ -5,10 +5,12 @@ import com.nelis.cnsd.presentation.dto.request.NewCustomerDTO;
 import com.nelis.cnsd.presentation.dto.response.GetBankAccountResponse;
 import com.nelis.cnsd.presentation.dto.response.NewBankAccountResponse;
 import com.nelis.cnsd.presentation.dto.response.NewCustomerResponse;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -22,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 public class CustomerStepDefs {
-
     private RestTemplate restTemplate = new RestTemplate();
-    private String path = "http://localhost:8081/customers";
 
+    @Value("http://localhost:${server.port}/customers")
+    private String path;
     private Long id;
     private List<GetBankAccountResponse> bankAccounts;
 
@@ -42,7 +44,7 @@ public class CustomerStepDefs {
         log.info("Create user response: " + response.getBody());
     }
 
-    @Given("One bank account is created for customer")
+    @And("One bank account is created for customer")
     public void oneBankAccountIsCreated() {
         HttpEntity<NewBankAccountDTO> requestEntity = new HttpEntity<>(new NewBankAccountDTO("IBAN", 125.0));
         ResponseEntity<NewBankAccountResponse> response = restTemplate.exchange(
@@ -65,7 +67,7 @@ public class CustomerStepDefs {
         log.info("Get all accounts response: " + response.getBody());
     }
 
-    @Then("They would see all bank accounts")
+    @Then("They would see one bank account")
     public void heWouldSeeAllBankAccounts() {
         assertEquals(1, bankAccounts.size());
     }
