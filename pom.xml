@@ -16,25 +16,11 @@
 	<properties>
 		<app.profiles>
 			test,
-			dev
+			dev,
+			prod
 		</app.profiles>
 		<java.version>17</java.version>
 	</properties>
-
-	<profiles>
-		<profile>
-			<id>test</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<spring.profiles.active>test</spring.profiles.active>
-			</properties>
-		</profile>
-		<profile>
-			<id>dev</id>
-		</profile>
-	</profiles>
 
 	<dependencies>
 		<dependency>
@@ -81,7 +67,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.27</version>
+			<version>42.5.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -117,6 +103,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<systemPropertyVariables>
+						<!--suppress UnresolvedMavenProperty -->
 						<spring.profiles.active>${spring.profiles.active}</spring.profiles.active>
 					</systemPropertyVariables>
 				</configuration>
