@@ -1,9 +1,7 @@
 package com.nelis.cnsd;
 
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -39,4 +37,5 @@ public class OpenAPIConfig {
 
         return new OpenAPI().info(info).servers(List.of(devServer, prodServer));
     }
+//    sup fucker
 }
