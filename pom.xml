@@ -101,12 +101,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<systemPropertyVariables>
-						<!--suppress UnresolvedMavenProperty -->
-						<spring.profiles.active>${spring.profiles.active}</spring.profiles.active>
-					</systemPropertyVariables>
-				</configuration>
+				<version>3.1.2</version>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -123,7 +118,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.7.201606060606</version>
+				<version>0.8.10</version>
 				<executions>
 					<execution>
 						<goals>
@@ -164,15 +159,6 @@
 						<avoidCallsTo>org.slf4j.Logger</avoidCallsTo>
 					</avoidCallsTo>
 				</configuration>
-				<executions>
-					<execution>
-						<id>mutationCoverage</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>mutationCoverage</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
