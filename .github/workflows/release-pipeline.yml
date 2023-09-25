@@ -3,8 +3,6 @@ name: Release pipeline
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - 'CNSD-minor/**'
 
 jobs:
   build:
@@ -23,7 +21,6 @@ jobs:
 
       - name: Build with Maven
         run: mvn -B install --file pom.xml
-        working-directory: CNSD-minor
 
       - name: Code Analysis
         run: |
@@ -33,11 +30,9 @@ jobs:
           -Dsonar.login=5e6febbebbd5841356745b865c2c685bb70acb43
           -Dsonar.qualitygate.wait=true \
           -Dsonar.qualitygate.timeout=60
-        working-directory: CNSD-minor
 
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag account-service:v$GITHUB_RUN_NUMBER
-        working-directory: CNSD-minor
 
       - name: Tag the build version
         run: |
