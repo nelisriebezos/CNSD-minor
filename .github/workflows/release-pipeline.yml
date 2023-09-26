@@ -2,7 +2,7 @@ name: Release pipeline
 
 on:
   push:
-    branches: [ "1.4.2" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -74,13 +74,13 @@ jobs:
             docker run -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=staging --name account-service ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
           "
 
-#      - name: Create Release
-#        id: create_release
-#        uses: actions/create-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
-#        with:
-#          tag_name: v${{ github.run_number }}
-#          release_name: v${{ github.run_number }}
-#          draft: false
-#          prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: v${{ github.run_number }}
+          draft: false
+          prerelease: false
