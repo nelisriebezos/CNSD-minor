@@ -29,8 +29,28 @@ jobs:
           -Dsonar.host.url=https://sonar.cloud-native-minor.it \
           -Dsonar.login=5e6febbebbd5841356745b865c2c685bb70acb43
 
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag account-service:v$GITHUB_RUN_NUMBER
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag and push the Docker image
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: account-service
+          IMAGE_TAG: v${{ github.run_number }}
+        run: |
+          docker build -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} .
+          docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+          echo "pushed image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
 
       - name: Tag the build version
         run: |
@@ -64,3 +84,4 @@ jobs:
 #          release_name: v${{ github.run_number }}
 #          draft: false
 #          prerelease: false
+
