@@ -1,0 +1,17 @@
+{
+  "1": {
+    "id": 1,
+    "firstName": "Niels",
+    "lastName": "Riezebos",
+    "email": "niels@mail.com",
+    "password": "admin",
+    "accounts": [1, 2]
+  },
+  "2": {
+    "id": 2,
+    "name": "Bram de man",
+    "email": "bram@mail.com",
+    "password": "admin",
+    "accounts": [1, 2]
+  }
+}

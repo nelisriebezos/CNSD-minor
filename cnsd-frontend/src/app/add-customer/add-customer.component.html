@@ -1,0 +1,28 @@
+<form [formGroup]="accountForm" (ngSubmit)="onSubmit()">
+
+    <div class="form-group">
+        <label for="BSN">BSN:</label>
+        <input type="text" id="BSN" class="form-control" formControlName="BSN" required>
+        <div *ngIf="accountForm.get('BSN')?.touched && accountForm.get('BSN')?.invalid">
+          <small class="text-danger">BSN is required</small>
+        </div>
+      </div>
+
+    <div class="form-group">
+      <label for="firstName">First name:</label>
+      <input type="text" id="firstName" class="form-control" formControlName="firstName" required>
+      <div *ngIf="accountForm.get('firstName')?.touched && accountForm.get('firstName')?.invalid">
+        <small class="text-danger">First name is required</small>
+      </div>
+    </div>
+  
+    <div class="form-group">
+      <label for="lastName">Last name:</label>
+      <input type="text" id="lastName" class="form-control" formControlName="lastName" required>
+      <div *ngIf="accountForm.get('lastName')?.touched && accountForm.get('lastName')?.invalid">
+        <small class="text-danger">Last name is required</small>
+      </div>
+    </div>
+  
+    <button type="submit" class="btn btn-primary" [disabled]="accountForm.invalid">Create</button>
+  </form>
