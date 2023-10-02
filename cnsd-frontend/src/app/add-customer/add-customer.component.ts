@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AccountComponent } from '../account/account.component';
-import { login } from 'src/service/authService';
+import { fetchLoginDetails } from 'src/service/authService';
 
 @Component({
   selector: 'app-add-customer',

@@ -1,10 +1,14 @@
 export class Account {
     constructor(
-        private _id: Number,
-        private _firstName: String,
-        private _lastName: String,
-        private _email: String,
-        private _password: String,
-        private _accounts: Number[]
+        private _id: number,
+        private _firstName: string,
+        private _lastName: string,
+        private _email: string,
+        private _password: string,
+        private _accounts: number[]
     ) {}
+
+    getFullName(): string {
+    return this._firstName + " " + this._lastName;    
+    }
 }

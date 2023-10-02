@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Account } from 'src/domain/Account';
-import { login } from 'src/service/authService';
+import { SharedService } from 'src/service/SharedService';
+import { fetchLoginDetails, setLoggedInUser } from 'src/service/authService';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ export class LoginComponent implements OnInit {
 
   loginForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private sharedService: SharedService) { }
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -25,9 +26,10 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) {
       return;
     }
-    let response: Account | null = login(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value)
+    let response: Account | null = fetchLoginDetails(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value)
 
     if (response != null) {
+      setLoggedInUser(response, this.sharedService)
       console.log('Login successful', response);
     } else {
       console.log('Login unsuccesful');

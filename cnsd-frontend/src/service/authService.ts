@@ -1,4 +1,5 @@
 import { Account } from "src/domain/Account";
+import { SharedService } from "./SharedService";
 
 const accounts = [
     1, {
@@ -19,7 +20,7 @@ const accounts = [
     }
 ]
 
-export function login(email: String, password: String): Account | null {
+export function fetchLoginDetails(email: String, password: String): Account | null {
     let loggedInAccount = null;
 
     accounts.forEach((item) => {
@@ -29,4 +30,14 @@ export function login(email: String, password: String): Account | null {
     });
 
     return loggedInAccount;
+}
+
+export function setLoggedInUser(user: Account, sharedService: SharedService) {
+    sessionStorage.setItem("loggedInUser", user.getFullName())
+    sharedService.setLoggedInUser(user.getFullName());
+}
+
+export function logOutUser(sharedService: SharedService) {
+    sessionStorage.setItem("loggedInUser", "")
+    sharedService.setLoggedInUser("");
 }
