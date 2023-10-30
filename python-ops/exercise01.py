@@ -2,12 +2,13 @@
 """Some description"""
 
 import requests
+import json
 
 
 def perform_get(baseurl):
     """Perform get request"""
-
-    # implement this
+    r = requests.get(baseurl)
+    print(json.dumps(r.json(), indent = 3))
 
 
 if __name__ == "__main__":

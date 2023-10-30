@@ -2,12 +2,24 @@
 """Some description"""
 
 import requests
+import json
 
 
 def perform_post(baseurl):
     """Perform post request"""
 
-    # implement this
+    post_data = {
+        "course": "Python Training", 
+        "name": "Exercise02"
+    }
+
+    headers = {
+        'User-Agent': 'Nelis',
+    }
+
+    r = requests.post(baseurl, data=post_data, headers=headers)
+    print(json.dumps(r.json(), indent = 3))
+
 
 
 if __name__ == "__main__":
