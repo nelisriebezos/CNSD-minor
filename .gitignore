@@ -50,3 +50,4 @@ target/
 *.properties
 
 *.venv
+*.aws-sam

@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Sample SAM Template for notes CRUD lambda's
+
+Globals:
+  Function:
+    Timeout: 50
+    Runtime: python3.9
+    Tracing: Active
+
+Resources:
+  NotesRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ./swagger-spec.json
+      TracingEnabled: true
+      MethodSettings:
+      - ResourcePath: '/*'
+        HttpMethod: '*'
+  GetNotesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_notes/
+      Handler: app.lambda_handler
+      Role: arn:aws:iam::958279819959:role/LabRole
+      Events:
+        GetNotes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "NotesRestApi"
+            Path: /notes
+            Method: get
+  PostNoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: post_note/
+      Handler: app.lambda_handler
+      Role: arn:aws:iam::958279819959:role/LabRole
+      Events:
+        NotesApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "NotesRestApi"
+            Path: /notes
+            Method: post
+  GetNoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_note/
+      Handler: app.lambda_handler
+      Role: arn:aws:iam::958279819959:role/LabRole
+      Events:
+        GetNotes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "NotesRestApi"
+            Path: /notes/{id}
+            Method: get
+  PutNoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: put_note/
+      Handler: app.lambda_handler
+      Role: arn:aws:iam::958279819959:role/LabRole
+      Events:
+        NotesApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "NotesRestApi"
+            Path: /notes/{id}
+            Method: put
+  DeleteNoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: delete_note/
+      Handler: app.lambda_handler
+      Role: arn:aws:iam::958279819959:role/LabRole
+      Events:
+        NotesApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "NotesRestApi"
+            Path: /notes/{id}
+            Method: delete
+
+Outputs:
+  GetNotesApi:
+    Description: "API Gateway endpoint URL for Prod stage for Notes function"
+    Value: !Sub "https://${NotesRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/notes/"
+  GetNotesFunction:
+    Description: "GetNotesFunction Function ARN"
+    Value: !GetAtt GetNotesFunction.Arn
+  PostNoteFunction:
+    Description: "PostNoteFunction Function ARN"
+    Value: !GetAtt PostNoteFunction.Arn
+  GetNoteFunction:
+    Description: "GetNoteFunction Function ARN"
+    Value: !GetAtt GetNoteFunction.Arn
+  PutNoteFunction:
+    Description: "PutNoteFunction Function ARN"
+    Value: !GetAtt PutNoteFunction.Arn
+  DeleteNoteFunction:
+    Description: "DeleteNoteFunction Function ARN"
+    Value: !GetAtt DeleteNoteFunction.Arn
