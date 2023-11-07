@@ -1,21 +1,21 @@
 {
   "swagger" : "2.0",
   "info" : {
-    "version" : "1.0",
-    "title" : "assignment-2-2-4"
+    "version" : "1.1",
+    "title" : "assignment-2-3-2"
   },
   "paths" : {
-    "/notes" : {
+    "/users/{user_id}/notes" : {
       "get" : {
-        "summary": "Returns a list of all notes",
-        "produces": [
-          "application/json"
-        ],
-        "responses" : {
-          "200": {
-            "description": "OK"
+        "parameters" : [
+          {
+            "name" : "user_id",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
           }
-        },
+        ],
+        "responses" : { },
         "x-amazon-apigateway-integration" : {
           "httpMethod" : "POST",
           "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetNotesFunction.Arn}/invocations"},
@@ -24,15 +24,7 @@
         }
       },
       "post" : {
-        "summary": "Creates a new note",
-         "produces": [
-          "application/json"
-         ],
-         "responses" : {
-            "200": {
-              "description": "OK"
-            }
-          },
+        "responses" : { },
         "x-amazon-apigateway-integration" : {
           "httpMethod" : "POST",
           "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostNoteFunction.Arn}/invocations"},
@@ -41,26 +33,23 @@
         }
       }
     },
-    "/notes/{id}" : {
+    "/users/{user_id}/notes/{note_id}" : {
       "get" : {
-        "summary": "Returns a single note",
-         "produces": [
-          "application/json"
-         ],
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
-        "responses" : {
-            "200": {
-              "description": "OK"
-            },
-            "404": {
-              "description": "NOT FOUND"
-            }
+        "parameters" : [
+          {
+            "name" : "user_id",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
           },
+          {
+            "name" : "note_id",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses" : { },
         "x-amazon-apigateway-integration" : {
           "httpMethod" : "POST",
           "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetNoteFunction.Arn}/invocations"},
@@ -69,21 +58,21 @@
         }
       },
       "put" : {
-        "summary": "Updates a note",
-           "produces": [
-          "application/json"
-         ],
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
-        "responses" : {
-          "200": {
-            "description": "OK"
+        "parameters" : [
+          {
+            "name" : "user_id",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "name" : "note_id",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
           }
-        },
+        ],
+        "responses" : { },
         "x-amazon-apigateway-integration" : {
           "httpMethod" : "POST",
           "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PutNoteFunction.Arn}/invocations"},
@@ -92,21 +81,21 @@
         }
       },
       "delete" : {
-        "summary": "Deletes a note",
-         "produces": [
-          "application/json"
-         ],
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
-        "responses" : {
-          "202": {
-            "description": "DELETED"
+        "parameters" : [
+          {
+            "name" : "user_id",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "name" : "note_id",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
           }
-        },
+        ],
+        "responses" : { },
         "x-amazon-apigateway-integration" : {
           "httpMethod" : "POST",
           "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteNoteFunction.Arn}/invocations"},

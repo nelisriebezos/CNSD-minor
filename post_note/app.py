@@ -1,41 +1,34 @@
-import boto3
 import json
-import decimal, datetime
-
+import boto3
+import uuid
 from aws_xray_sdk.core import patch_all
-from sqlalchemy import text, create_engine
-from datetime import date
 
 patch_all()
-
-ssm = boto3.client('ssm')
-username = ssm.get_parameter(Name="/dev/postgres/username")['Parameter']['Value']
-password = ssm.get_parameter(Name="/dev/postgres/password")['Parameter']['Value']
-database_url = ssm.get_parameter(Name="/dev/postgres/database_url")['Parameter']['Value']
-port = ssm.get_parameter(Name="/dev/postgres/port")['Parameter']['Value']
-database = ssm.get_parameter(Name="/dev/postgres/database")['Parameter']['Value']
-
-database_url = f"postgresql://{username}:{password}@{database_url}:{port}/{database}"
-
-engine = create_engine(database_url)
 
 def lambda_handler(event, context):
 
     print (f"{event} {type(event)}")
 
-    tekst = json.loads(event.get('body')).get('tekst')
-    aangemaakt = date.today().strftime("%d/%m/%Y")
+    user_id = event['pathParameters']['user_id']
+    body = json.loads(event["body"])
 
-    with engine.connect() as connection:
-        query = text("INSERT INTO public.notes (tekst, aangemaakt) VALUES (:x, :y)")
-        query = query.bindparams(x=tekst, y=aangemaakt)
-        connection.execute(query)
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('notes-2.3.2')
+
+    item={
+        'ID': f'USER#{user_id}',
+        'SK': f'NOTE#{str(uuid.uuid4())}',
+        'tekst': body["tekst"],
+        'Tag': body["tag"],
+        'Type': 'NOTE',
+        'GSI1PK': f'TAG#{body["tag"]}',
+        'GSI1SK': f'USER#{user_id}'
+    }
+
+    response = table.put_item(Item=item)
+    print (f"{response} {type(response)}")
 
     return {
-        'statusCode': 201,
-        'body': None,
-        'headers': {
-            'content-type' : 'application/json'
-        },
-        "isBase64Encoded": False
+        "statusCode": 200,
+        "body": json.dumps(item)
     }

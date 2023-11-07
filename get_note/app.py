@@ -1,46 +1,30 @@
 import json
 import boto3
-import decimal, datetime
-
+from boto3.dynamodb.conditions import Key
 from aws_xray_sdk.core import patch_all
-from sqlalchemy import text, create_engine
 
 patch_all()
 
-ssm = boto3.client('ssm')
-username = ssm.get_parameter(Name="/dev/postgres/username")['Parameter']['Value']
-password = ssm.get_parameter(Name="/dev/postgres/password")['Parameter']['Value']
-database_url = ssm.get_parameter(Name="/dev/postgres/database_url")['Parameter']['Value']
-port = ssm.get_parameter(Name="/dev/postgres/port")['Parameter']['Value']
-database = ssm.get_parameter(Name="/dev/postgres/database")['Parameter']['Value']
-
-database_url = f"postgresql://{username}:{password}@{database_url}:{port}/{database}"
-
-engine = create_engine(database_url)
-
-def alchemyencoder(obj):
-    """JSON encoder function for SQLAlchemy special classes."""
-    if isinstance(obj, datetime.date):
-        return obj.isoformat()
-    elif isinstance(obj, decimal.Decimal):
-        return float(obj)
-
 def lambda_handler(event, context):
+
     print (f"{event} {type(event)}")
+    user_id = event['pathParameters']['user_id']
+    note_id = event['pathParameters']['note_id']
 
-    id = event['pathParameters']['id']
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('notes-2.3.2')
 
-    with engine.connect() as connection:
-        query = text("SELECT * FROM public.notes WHERE id=:x")
-        query = query.bindparams(x=id)
-        result = connection.execute(query)
+    response = table.get_item(Key={
+        'ID': f'USER#{user_id}',
+        'SK': f'NOTE#{note_id}'
+    })
 
-    notes = json.dumps([dict(row) for row in result], default=alchemyencoder)
+    print(f"{response}")
 
-    if notes == '[]':
+    if 'Item' in response:
         return {
-            'statusCode': 404,
-            'body': notes,
+            'statusCode': 200,
+            'body': json.dumps(response['Item']),
             'headers': {
                 'content-type': 'application/json'
             },
@@ -48,10 +32,11 @@ def lambda_handler(event, context):
         }
 
     return {
-        'statusCode': 200,
-        'body': notes,
+        'statusCode': 404,
+        'body': 'Not Found',
         'headers': {
-            'content-type' : 'application/json'
+            'content-type': 'application/json'
         },
         "isBase64Encoded": False
     }
+

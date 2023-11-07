@@ -20,8 +20,8 @@ Resources:
             Location: ./swagger-spec.json
       TracingEnabled: true
       MethodSettings:
-      - ResourcePath: '/*'
-        HttpMethod: '*'
+        - ResourcePath: '/*'
+          HttpMethod: '*'
   GetNotesFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -33,7 +33,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref "NotesRestApi"
-            Path: /notes
+            Path: /users/{user_id}/notes
             Method: get
   PostNoteFunction:
     Type: AWS::Serverless::Function
@@ -46,7 +46,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref "NotesRestApi"
-            Path: /notes
+            Path: /users/{user_id}/notes
             Method: post
   GetNoteFunction:
     Type: AWS::Serverless::Function
@@ -59,7 +59,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref "NotesRestApi"
-            Path: /notes/{id}
+            Path: /users/{user_id}/notes/{note_id}
             Method: get
   PutNoteFunction:
     Type: AWS::Serverless::Function
@@ -72,7 +72,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref "NotesRestApi"
-            Path: /notes/{id}
+            Path: /users/{user_id}/notes/{note_id}
             Method: put
   DeleteNoteFunction:
     Type: AWS::Serverless::Function
@@ -85,8 +85,24 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref "NotesRestApi"
-            Path: /notes/{id}
+            Path: /users/{user_id}/notes/{note_id}
             Method: delete
+  NotesDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: notes-2.3.2
+      AttributeDefinitions:
+        - AttributeName: ID
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: ID
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
 
 Outputs:
   GetNotesApi:
