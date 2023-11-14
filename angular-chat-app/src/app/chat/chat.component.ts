@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy  } from '@angular/core';
 import { ChatService } from '../service/chat.service';
 
 @Component({
@@ -6,10 +6,11 @@ import { ChatService } from '../service/chat.service';
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
-export class ChatComponent {
+export class ChatComponent implements OnDestroy {
   message: string = '';
 
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService) {
+  }
 
   updateMessage(event: Event) {
     this.message = (event.target as HTMLInputElement).value;
@@ -18,12 +19,16 @@ export class ChatComponent {
   send() {
     console.log(this.message);
     if (this.message.trim()) {
-      this.chatService.addMessage(this.message);
+      this.chatService.sendMessage(this.message);
       this.message = '';
     }
   }
 
   get messages(): string[] {
     return this.chatService.getMessages();
+  }
+
+  ngOnDestroy(): void {
+    this.chatService.unSubScribeFromWebsocket();
   }
 }
