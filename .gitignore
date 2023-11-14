@@ -51,3 +51,5 @@ target/
 
 *.venv
 *.aws-sam
+
+node_modules
