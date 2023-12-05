@@ -1,0 +1,11 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "incident-3-1-1"
+resolve_s3 = true
+s3_prefix = "incident-3-1-1"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+parameter_overrides = "LabRole=\"arn:aws:iam::713999011638:role/LabRole\""
+image_repositories = []

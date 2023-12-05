@@ -1,0 +1,136 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM Template for assignment-3-1-1
+
+Globals:
+  Function:
+    Timeout: 50
+    Runtime: python3.9
+    Tracing: Active
+
+Parameters:
+  LabRole:
+    Type: String
+    Default: "arn:aws:iam::713999011638:role/LabRole"
+
+Resources:
+  RestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: swagger-spec.json
+      TracingEnabled: true
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: '*'
+          LoggingLevel: INFO
+          MetricsEnabled: true
+      AccessLogSetting:
+        DestinationArn: !GetAtt AccessLogGroup.Arn
+        Format: '{"requestTime":"$context.requestTime","requestId":"$context.requestId","httpMethod":"$context.httpMethod","path":"$context.path","routeKey":"$context.routeKey","status":$context.status,"responseLatency":$context.responseLatency}'
+  AccessLogGroup:
+    Type: AWS::Logs::LogGroup
+
+
+  PostLoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: login/
+      Handler: app.lambda_handler
+      Role: !Ref LabRole
+      Events:
+        PostLogin:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "RestApi"
+            Path: /login
+            Method: post
+  PostRegisterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: register/
+      Handler: app.lambda_handler
+      Role: !Ref LabRole
+      Events:
+        PostRegister:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "RestApi"
+            Path: /register
+            Method: post
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello_world/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Role: !Ref LabRole
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "RestApi"
+            Path: /hello
+            Method: get
+
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: "CognitoUserPool"
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Schema:
+        - Name: email
+          Required: true
+          AttributeDataType: String
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_LINK
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+  CognitoUserPoolUser:
+    Type: AWS::Cognito::UserPoolUser
+    Properties:
+      DesiredDeliveryMediums:
+        - EMAIL
+      Username: "luukpook@gmail.com"
+      UserPoolId: !Ref CognitoUserPool
+
+  CognitoDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: nelistestdomain
+      UserPoolId: !Ref CognitoUserPool
+
+Outputs:
+  RestApi:
+    Description: "API Gateway endpoint URL for Prod stage for assignment-3-1-1 function"
+    Value: !Sub "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com"
+  PostLoginFunction:
+    Description: "PostLoginFunction Function ARN"
+    Value: !GetAtt PostLoginFunction.Arn
+  PostRegisterFunction:
+    Description: "PostRegisterFunction Function ARN"
+    Value: !GetAtt PostRegisterFunction.Arn
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
